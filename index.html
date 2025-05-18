@@ -1,187 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wildfire Dashboard Minimal</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 1rem;
-    background: #121212;
-    color: #eee;
-  }
-  header {
-    text-align: center;
-    margin-bottom: 1rem;
-    color: #ff6b35;
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
-  .tabs {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  .tab {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border-radius: 20px;
-    background: #333;
-    color: #aaa;
-    user-select: none;
-  }
-  .tab.active {
-    background: #ff6b35;
-    color: white;
-  }
-  .tab-content {
-    display: none;
-  }
-  .tab-content.active {
-    display: block;
-  }
-  #redMap, #greenMap {
-    height: 250px;
-    border-radius: 8px;
-    margin-top: 0.5rem;
-  }
-  .chart-container {
-    max-width: 400px;
-    margin: 0.5rem auto;
-  }
-  .info {
-    margin: 1rem 0;
-    font-size: 0.9rem;
-    line-height: 1.4;
-  }
-  button {
-    display: block;
-    margin: 0.5rem auto 1rem;
-    padding: 0.4rem 1rem;
-    border: none;
-    border-radius: 20px;
-    background: #97c24f;
-    color: #121212;
-    font-weight: bold;
-    cursor: pointer;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JonesDashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 </head>
 <body>
+  <header>
+    <h1>JonesDashboard</h1>
+    <p>Monitoring red and green zones in Northern Thailand</p>
+  </header>
 
-<header>🔥 Wildfire Dashboard - Northern Thailand</header>
-
-<div class="tabs">
-  <div class="tab active" data-tab="red">Red Zone</div>
-  <div class="tab" data-tab="green">Green Zone</div>
-</div>
-
-<div id="red" class="tab-content active">
-  <h3>Red Zone 🔴</h3>
-  <div class="chart-container">
-    <canvas id="tempRed"></canvas>
+  <div class="toggle-buttons">
+    <button id="redBtn" class="active">Red Zone - Wildfires</button>
+    <button id="greenBtn">Green Zone - Forest</button>
   </div>
-  <div class="chart-container">
-    <canvas id="windRed"></canvas>
+
+  <div class="alert-box" id="alertBox">
+    <button class="alert-toggle-btn" onclick="toggleAlert()">Show Alert</button>
+    <div class="alert-content hidden" id="alertContent"></div>
   </div>
-  <div id="redMap"></div>
-  <div class="info">
-    Mae Hong Son: 35°C, Wind 10 km/h, Humidity Moderate<br/>
-    Chiang Mai: 38°C, Wind 15 km/h, Humidity Very High<br/>
-    Lampang: 37°C, Wind 12 km/h, Humidity High
+
+  <div class="map-section">
+    <h2>Risk Map</h2>
+    <div id="map"></div>
   </div>
-</div>
 
-<div id="green" class="tab-content">
-  <h3>Green Zone 🌿</h3>
-  <button id="toggleAlert">Toggle Alert</button>
-  <div id="greenAlert" class="info" style="display:none; background:#2a4d14; padding:0.5rem; border-radius:6px; color:#d4f26f;">
-    <p><strong>⚠️ Lampang</strong> - Level B risk! Monitor.</p>
-    <p><strong>⚠️ Lamphun</strong> - Level D risk! Patrol frequently.</p>
+  <div class="info-section">
+    <h2>Province Data</h2>
+    <div class="card-container" id="provinceData">
+      <!-- ข้อมูลจังหวัดจะแสดงที่นี่ -->
+    </div>
   </div>
-  <div class="chart-container">
-    <canvas id="humidityGreen"></canvas>
+
+  <div class="charts-section">
+    <h2>Trend Graphs</h2>
+    <div class="chart-row">
+      <canvas id="temperatureChart"></canvas>
+      <canvas id="humidityChart"></canvas>
+      <canvas id="hotspotChart"></canvas>
+    </div>
   </div>
-  <div class="chart-container">
-    <canvas id="rainfallGreen"></canvas>
+
+  <div class="green-zone">
+    <h2>Green Zone</h2>
+    <p>ข้อมูลและรายละเอียดของพื้นที่สีเขียว</p>
+    <h2 style="color: #2d6514;">🌲 Forest Conservation Advisory – Phayao (Dok Khamtai District)</h2>
+  
+  <p><strong>Great news!</strong><br>
+  The forest in <strong>Dok Khamtai District, Phayao Province</strong>, is currently in <strong>excellent condition</strong>, boasting rich biodiversity and lush, thriving ecosystems.</p>
+
+  <p><strong>✅ Forest Integrity Level: A – Excellent</strong><br>
+  This signifies a high level of ecological health, minimal human disturbance, and a strong presence of native flora and fauna.</p>
+
+  <h3 style="color: #2d6514;">🔔 What You Should Do:</h3>
+  <ul>
+    <li>Respect wildlife – Avoid disturbing animals and observe them from a distance.</li>
+    <li>Stay on designated trails – Prevent soil erosion and protect delicate plant life.</li>
+    <li>Do not litter – Carry your trash out with you and dispose of it responsibly.</li>
+    <li>Avoid starting fires – Even in healthy forests, fire risks can still exist.</li>
+    <li>Educate others – Share knowledge about the importance of preserving pristine forests.</li>
+  </ul>
+
+  <h3 style="color: #2d6514;">🌳 Why It Matters:</h3>
+  <ul>
+    <li>Carbon capture and climate regulation</li>
+    <li>Clean air and water</li>
+    <li>Supporting biodiversity</li>
+    <li>Sustaining local communities</li>
+  </ul>
+
+  <p style="font-weight: bold;">Let’s work together to protect this natural treasure for future generations. 🌎💚</p>
+    
   </div>
-  <div id="greenMap"></div>
-  <div class="info">
-    Humidity: 35%, Rainfall: 4 mm, Fire Risk: Level D
+  
+  <div class="red-zone">
+    <h2>Red Zone</h2>
+    <p>ข้อมูลและรายละเอียดของพื้นที่สีแดง</p>
+    <h2>🔥 Wildfire Risk Alert: High in Long District, Phrae Province</h2>
+    <p>Due to current weather and environmental conditions, the risk of wildfire has significantly increased in <strong>Long District, Phrae Province</strong>.</p>
+    <p>Please take the following precautions to protect yourself and your community:</p>
+    <ul>
+      <li><strong>Avoid outdoor burning</strong> of any kind, including agricultural waste or trash.</li>
+      <li><strong>Stay alert</strong> for signs of smoke or fire in nearby forest areas.</li>
+      <li><strong>Report any signs of wildfire immediately</strong> to local authorities or call the national emergency hotline (e.g., 191).</li>
+      <li><strong>Protect your health</strong> – If smoke is present, stay indoors with windows and doors closed.</li>
+      <li><strong>Prepare an emergency kit</strong> with essentials in case evacuation becomes necessary.</li>
+      <li><strong>Stay updated</strong> through local news, weather apps, or official announcements from authorities.</li>
+    </ul>
+    <p><strong>Together, we can reduce the risk and impact of wildfires in our community.</strong></p>
+    <p><em>Stay safe.</em></p>
   </div>
-</div>
+  
 
-<script>
-  // Tabs
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.onclick = () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.tab).classList.add('active');
-    };
-  });
+  <footer>
+    <p>Forest Monitoring System © 2025</p>
+  </footer>
 
-  // Alert toggle
-  const alertBox = document.getElementById('greenAlert');
-  document.getElementById('toggleAlert').onclick = () => {
-    alertBox.style.display = alertBox.style.display === 'none' ? 'block' : 'none';
-  };
-
-  // Charts
-  new Chart(document.getElementById('tempRed'), {
-    type: 'line',
-    data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri'],
-      datasets: [{label:'Temp (°C)', data:[36,37,39,40,39], borderColor:'red', fill:false}]
-    }
-  });
-
-  new Chart(document.getElementById('windRed'), {
-    type: 'bar',
-    data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri'],
-      datasets: [{label:'Wind (km/h)', data:[10,12,18,22,20], backgroundColor:'blue'}]
-    }
-  });
-
-  new Chart(document.getElementById('humidityGreen'), {
-    type: 'line',
-    data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri'],
-      datasets: [{label:'Humidity (%)', data:[45,40,35,32,30], borderColor:'green', fill:false}]
-    }
-  });
-
-  new Chart(document.getElementById('rainfallGreen'), {
-    type: 'bar',
-    data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri'],
-      datasets: [{label:'Rainfall (mm)', data:[5,3,2,1,0], backgroundColor:'lightblue'}]
-    }
-  });
-
-  // Maps
-  const redMap = L.map('redMap').setView([18.8, 99], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(redMap);
-  L.circle([18.8, 98.9], {radius:10000, color:'red'}).addTo(redMap).bindPopup("Chiang Mai: Critical Fire Risk");
-  L.circle([19.2, 99.5], {radius:10000, color:'orange'}).addTo(redMap).bindPopup("Chiang Rai: High Fire Risk");
-
-  const greenMap = L.map('greenMap').setView([18.8, 99], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(greenMap);
-  [
-    {coords:[19.0,99.2], color:'limegreen', province:'Lampang', level:'B'},
-    {coords:[18.7,98.9], color:'orange', province:'Lamphun', level:'D'},
-    {coords:[18.9,99.4], color:'yellow', province:'Phayao', level:'C'}
-  ].forEach(z => {
-    L.circle(z.coords, {color:z.color, radius:9000}).addTo(greenMap).bindPopup(`${z.province}: Level ${z.level}`);
-  });
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
